@@ -4,14 +4,14 @@
 <script id="vertex-shader" type="x-shader/x-vertex">
 #version 300 es
 
-in vec4 aPosition;
-in vec4 aColor;
+in vec4 aPosition;//attribute
+in vec4 aColor;//attribute
 
-out vec4 vColor;
+out vec4 vColor;//vertex
 
 void main()
 {
-  gl_Position = aPosition;
+  gl_Position = aPosition; 
   vColor = aColor;
 }
 </script>
@@ -22,7 +22,8 @@ void main()
 precision mediump float;
 
 in vec4 vColor;
-out vec4  fColor;
+out vec4  fColor; //fragment
+//u is uniform
 
 void main()
 {

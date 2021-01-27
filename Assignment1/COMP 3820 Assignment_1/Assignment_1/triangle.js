@@ -1,7 +1,7 @@
 "use strict";
 
 var gl;
-var points, pointsSquare, vertices;
+var points, pointsSquare, circlePoints;
 
 var colors = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 var program;
@@ -16,31 +16,6 @@ window.onload = function init() {
     if (!gl) { alert("WebGL 2.0 isn't available"); }
 
     //
-    //  Initialize our data for a single triangle
-    //
-
-    // First, initialize the  three points.
-
-    points = new Float32Array([
-        -1, -1,
-        0, 1,
-        1, -1,
-    ]);
-
-    pointsSquare = new Float32Array([
-        -0.75, 0.75,
-        0.75, 0.75,
-        0.75, -0.75,
-        -0.75, -0.75
-    ]);
-    vertices = [
-        vec2(-0.5, -0.5),
-        vec2(-0.5, 0.5),
-        vec2(0.5, 0.5),
-        vec2(0.5, -0.5)
-    ];
-
-    //
     //  Configure WebGL
     //
     //clip cordinants 
@@ -52,51 +27,86 @@ window.onload = function init() {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    // Load the data into the GPU
-    // var bufferId = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    // gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+    //
+    //  Initialize our data for a single triangle
+    //
 
-    // Associate out shader variables with our data buffer
-    // var aPosition = gl.getAttribLocation(program, "aPosition");
-    // gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(aPosition);
+    // First, initialize the  three points.
 
+    points = new Float32Array([-1, -1,
+        0, 1,
+        1, -1,
+    ]);
 
+    pointsSquare = new Float32Array([-0.75, 0.75,
+        0.75, 0.75,
+        0.75, -0.75, -0.75, -0.75
+    ]);
 
+    const numVerts = 100;
+    var radius = 0.8
+    circlePoints = [];
+    for(var i =0;i<numVerts;i++)
+    {
+        var u = i / numVerts;
+        var angle = u * 3.14159 * 2.0;
+        var pos = vec2(Math.cos(angle)* radius, Math.sin(angle)* radius) ;
+        circlePoints.push(pos);
+    }
 
-    // cBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);//new Float32Array(colors)
+    
 
-    // var aColor = gl.getAttribLocation(program, "aColor");
-    // //3 points colors?
-    // gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(aColor);
+    squareTryangleCircle = "circle";
+            var colors = [1, 0, 1, 1, 0, 1];
+            var numPoints = numVerts;
+            for (var i = 0; i < numPoints; i++)colors.push(1,0,1);
+    
+
+            var bufferId = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, flatten(circlePoints), gl.STATIC_DRAW);
+
+            var aPosition = gl.getAttribLocation(program, "aPosition");
+            gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(aPosition);
+
+            cBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW); //new Float32Array(colors)
+
+            var aColor = gl.getAttribLocation(program, "aColor");
+            //3 points colors?
+            gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(aColor);
+        
+            render("red");
 
     window.addEventListener('keydown', this.checkKey);
 
-    render(3);
 };
 
+//function to set rendering peramiters 
 function render(colorName) {
     var numPoints;
-    var colors =[];
+    var colors = [];
     var colorArray = [];
 
-    if(colorName == "red") colorArray = [1,0,0];
-    else if(colorName == "green")colorArray = [0,1,0];
-    else if(colorName == "blue")colorArray = [0,0,1];
+    if (colorName == "red") colorArray = [1, 0, 0];
+    else if (colorName == "green") colorArray = [0, 1, 0];
+    else if (colorName == "blue") colorArray = [0, 0, 1];
+    else if (colorName == "favourite") colorArray = [.7, .1, 1];
 
-    if(squareTryangleCircle == "square")
-    {
-        numPoints = 4;        
-        for(var i=0;i<numPoints;i++)colors.push(...colorArray);        
+    if (squareTryangleCircle == "square") {
+        numPoints = 4;
+        for (var i = 0; i < numPoints; i++ )colors.push(...colorArray);
     }
-    else if(squareTryangleCircle == "trinagle")
-    {
+    else if (squareTryangleCircle == "trinagle") {
         numPoints = 3;
-        for(var i=0;i<numPoints;i++)colors.push(...colorArray); 
+        for (var i = 0; i < numPoints; i++ )colors.push(...colorArray);
+    }
+    else if (squareTryangleCircle == "circle") {
+        numPoints = 100;
+        for (var i = 0; i < numPoints; i++)colors.push(...colorArray);
     }
 
     gl.bufferSubData(gl.ARRAY_BUFFER, points, new Float32Array(colors));
@@ -104,81 +114,20 @@ function render(colorName) {
     gl.drawArrays(gl.TRIANGLE_FAN, 0, numPoints);
 }
 
-function renderTriangle() {
-    //
-    var canvas = document.getElementById("gl-canvas");
-    gl = canvas.getContext('webgl2');
-
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.7, 0.7, 1.0, 1.0);
-
-    //  Load shaders and initialize attribute buffers
-
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
-    gl.useProgram(program);
-
-
-    // Load the data into the GPU
-
-    var bufferId = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
-
-    // Associate out shader variable with our data buffer
-
-    var aPosition = gl.getAttribLocation(program, "aPosition");
-    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(aPosition);
-
-
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-
-}  //drawelements() ?
-
-//function that renders a square
-function renderSquare() {
-    var canvas = document.getElementById("gl-canvas");
-    gl = canvas.getContext('webgl2');
-
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.7, 0.7, 1.0, 1.0);
-
-    //  Load shaders and initialize attribute buffers
-
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
-    gl.useProgram(program);
-
-
-    // Load the data into the GPU
-
-    bufferId = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
-
-    // Associate out shader variable with our data buffer
-
-    var aPosition = gl.getAttribLocation(program, "aPosition");
-    gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(aPosition);
-
-
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-}
+//function that handles key presses
 function checkKey(e) {
     //alert(e.keyCode);
     switch (e.keyCode) {
         //red
         case 49:
-            var colors = [1, 0, 0,1, 0, 0,1, 0, 0];
+            var colors = [1, 0, 0, 1, 0, 0, 1, 0, 0];
             gl.bufferSubData(gl.ARRAY_BUFFER, points, new Float32Array(colors));
             render("red");
             break;
         //green
         case 50:
-            var colors = [0, 1, 0, 0, 1, 0, 0, 1, 0];
-            gl.bufferSubData(gl.ARRAY_BUFFER, points, new Float32Array(colors));
+           // var colors = [0, 1, 0, 0, 1, 0, 0, 1, 0];
+           // gl.bufferSubData(gl.ARRAY_BUFFER, points, new Float32Array(colors));
             render("green");
             break;
         //blue
@@ -214,7 +163,7 @@ function checkKey(e) {
 
             cBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);//new Float32Array(colors)
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW); //new Float32Array(colors)
 
             var aColor = gl.getAttribLocation(program, "aColor");
             //3 points colors?
@@ -222,12 +171,11 @@ function checkKey(e) {
             gl.enableVertexAttribArray(aColor);
 
             render();
-            // requestAnimationFrame(render);
             break;
         // square
         case 83:
             squareTryangleCircle = "square";
-            var colors = [0, 0, 1, 0, 0, 1, 0, 0, 1,0,0,1];
+            var colors = [0, 1, 1, 0, 1, 1, 0.5, 0, 1, .6, .1, 1];
 
             var bufferId = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
@@ -239,10 +187,9 @@ function checkKey(e) {
 
             cBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);//new Float32Array(colors)
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW); //new Float32Array(colors)
 
             var aColor = gl.getAttribLocation(program, "aColor");
-            //3 points colors?
             gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(aColor);
 
@@ -250,9 +197,30 @@ function checkKey(e) {
             break;
         // circle
         case 67:
-            var colors = [1, 0, 0, 1, 0, 0, 1, 0, 0];
-            gl.bufferSubData(gl.ARRAY_BUFFER, points, new Float32Array(colors));
-            renderTriangle();
+            squareTryangleCircle = "circle";
+            var colors = [1, 0, 1, 1, 0, 1];
+            var numPoints = 100;
+            for (var i = 0; i < numPoints; i++)colors.push(1,0,1);
+    
+
+            var bufferId = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, flatten(circlePoints), gl.STATIC_DRAW);
+
+            var aPosition = gl.getAttribLocation(program, "aPosition");
+            gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(aPosition);
+
+            cBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW); //new Float32Array(colors)
+
+            var aColor = gl.getAttribLocation(program, "aColor");
+            //3 points colors?
+            gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(aColor);
+        
+            render("favourite");
             break;
     }
 }
