@@ -1,5 +1,12 @@
 
 <html>
+  <style>
+    div {
+      width: 200px;
+      height: 100px;
+      border: 1px solid black;
+    }
+    </style>
 
 <script id="vertex-shader" type="x-shader/x-vertex">
 #version 300 es
@@ -35,8 +42,13 @@ void main()
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="triangle.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <body>
   <canvas id="gl-canvas" width="512" height="512"> </canvas>
+  <button id="initalButton">Click for first initial</button>
+  <div onmousemove="myFunction(event)" ></div>
+  <p id="demo"></p>
+  
 </body>
 
 </html>
