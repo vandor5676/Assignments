@@ -177,6 +177,7 @@ function displayLetter() {
 
 }
 
+//helper to get points for letter s
 function myFunction(e) {
     var x = e.clientX;
     var y = e.clientY;
