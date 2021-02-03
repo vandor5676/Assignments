@@ -31,9 +31,20 @@ void main()
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="assignment2.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <body>
-    <canvas id="gl-canvas" width="512" height="512"> </canvas>
+    <canvas id="gl-canvas" width="512" height="512" style=" margin: 0 25%;"> </canvas>
+    <div></div>
+    <button id="startButton">Start</button>
+    <button id="stopButton">Stop</button>
+    <button id="directionButton">Change Direction</button>
+    <select id="Controls" size="4">
+      <option value="0">Red</option>
+      <option value="1">Green</option>
+      <option value="2">Blue</option>
+      <option value="3">Yellow</option>
+  </select>
 </body>
 
 </html>
