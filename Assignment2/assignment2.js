@@ -58,10 +58,9 @@ window.onload = function init()
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
 
+    //make shape go back and forth,  
     backAndForth = (Math.cos(angle)/1.43);
-    angle = angle ==360?0:angle+=0.05;
-    
-    console.log(backAndForth);
+    angle = angle >=2*3.14159 ?0:angle+=0.05;
 
     gl.uniform1f(LRTranslation, backAndForth);
     
@@ -69,6 +68,6 @@ function render() {
 
     setTimeout(
         function () {requestAnimationFrame(render);},
-        0.1// speed
+        5.0// speed
     );
 }
