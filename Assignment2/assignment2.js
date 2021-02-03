@@ -4,6 +4,7 @@ var gl;
 var points;
 var LRTranslation;
 var test = 0.0;
+var angle =0;
 
 
 window.onload = function init()
@@ -57,13 +58,17 @@ window.onload = function init()
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
 
-    test += 0.1;
-    gl.uniform1f(LRTranslation, test);
+    test += Math.cos(angle);
+    angle = angle ==360?0:angle+=0.01;
+    
+    console.log(test);
 
+    gl.uniform1f(LRTranslation, test/100);
+    
     gl.drawArrays( gl.TRIANGLES, 0, 3 );
 
     setTimeout(
         function () {requestAnimationFrame(render);},
-        1.0// speed
+        0.1// speed
     );
 }
