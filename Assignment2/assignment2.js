@@ -3,7 +3,7 @@
 var gl;
 var points;
 var LRTranslation;
-var test = 0.0;
+var backAndForth = 0.0;
 var angle =0;
 
 
@@ -58,12 +58,12 @@ window.onload = function init()
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
 
-    test += Math.cos(angle);
-    angle = angle ==360?0:angle+=0.01;
+    backAndForth = (Math.cos(angle)/1.43);
+    angle = angle ==360?0:angle+=0.05;
     
-    console.log(test);
+    console.log(backAndForth);
 
-    gl.uniform1f(LRTranslation, test/100);
+    gl.uniform1f(LRTranslation, backAndForth);
     
     gl.drawArrays( gl.TRIANGLES, 0, 3 );
 

@@ -9,8 +9,8 @@ uniform float uLRTranslation;
 
 void main()
 {
-  gl_Position.x = aPosition.x +uLRTranslation;
-  gl_Position.y = 0.5-aPosition.y;
+  gl_Position.x = aPosition.x  + uLRTranslation ;
+  gl_Position.y = 0.5 +aPosition.y;
   gl_Position.z =0.0;
   gl_Position.w =1.0;
 }
