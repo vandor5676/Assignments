@@ -5,10 +5,11 @@
 #version 300 es
 
 in vec4 aPosition;
+uniform float uLRTranslation;
 
 void main()
 {
-  gl_Position = aPosition;
+  gl_Position.x = uLRTranslation;
 }
 </script>
 
@@ -26,8 +27,10 @@ void main()
 </script>
 
 <script type="text/javascript" src="../Common/initShaders.js"></script>
-<script type="text/javascript" src="many_shapes_and_colours.js"></script>
+<script type="text/javascript" src="assignment2.js"></script>
 
-<canvas id="gl-canvas" width="512" height="512"> </canvas>
+<body>
+    <canvas id="gl-canvas" width="512" height="512"> </canvas>
+</body>
 
 </html>

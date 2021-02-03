@@ -2,6 +2,8 @@
 
 var gl;
 var points;
+var LRTranslation;
+var test = 0.0;
 
 
 window.onload = function init()
@@ -18,9 +20,9 @@ window.onload = function init()
     // First, initialize the  three points.
 
      points = new Float32Array([
-       -1, -1 ,
-          0,  1 ,
-          1, -1
+       -0.3, -0.3 ,
+          0,  0.3 ,
+          0.3, -0.3
         ]);
 
     //
@@ -46,11 +48,22 @@ window.onload = function init()
     gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( aPosition );
 
+    LRTranslation = gl.getUniformLocation(program, "uLRTranslation");
+
     render();
 };
 
 
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
+
+    test += 0.1;
+    gl.uniform1f(LRTranslation, test);
+
     gl.drawArrays( gl.TRIANGLES, 0, 3 );
+
+    setTimeout(
+        function () {requestAnimationFrame(render);},
+        1.0// speed
+    );
 }
