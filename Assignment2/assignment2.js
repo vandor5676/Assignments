@@ -5,7 +5,7 @@ var points ,points2;
 var LRTranslation, matrixLocation ;
 var backAndForth = 0.0; 
 var matrix =[-1,0,0,0,1,0,0,0,1];
-var angle =0,directionMutiplyer = 1,angleIncroment=0.05;
+var angle =0,directionMutiplyer = 1,angleIncroment=0.05, savedAngleIncroment;
 var program;
 
 
@@ -27,12 +27,6 @@ window.onload = function init()
           0,  0.3 ,
           0.3, -0.3,
           0.5,0.1
-        ]);
-     points2 = new Float32Array([
-       -0.3, -0.3 ,
-          0.3,  0 ,
-          -0.3, 0.3,
-          0.1,0.5
         ]);
 
     //
@@ -65,27 +59,45 @@ window.onload = function init()
     // Set the matrix.
    // gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
+
+
     $("#startButton").click(start);
     $("#stopButton").click(stop);
     $("#directionButton").click(chnageDirection);
+    $("#speedSlider").on('input',sliderChange);
 
 
     render();
 };
 
+function sliderChange()
+{
+    //alert( typeof $("#speedSlider").val());
+    angleIncroment = parseFloat($("#speedSlider").val()) *directionMutiplyer;
+    savedAngleIncroment = angleIncroment;
+}
+
+//start the animation
 function start()
 {
-    angleIncroment = 0.05;
+    angleIncroment =savedAngleIncroment;
 }
+//stop the animation
 function stop()
 {
+    if(angleIncroment != 0)
+    savedAngleIncroment = angleIncroment;
     angleIncroment = 0;
 }
+//change the animations direction
 function chnageDirection()
 {
+  
     directionMutiplyer=directionMutiplyer*-1;
     angleIncroment = angleIncroment * -1;
+    savedAngleIncroment =savedAngleIncroment *-1;
 }
+//render function
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
 
@@ -108,14 +120,5 @@ function render() {
         5.0// speed
     );
 }
-
-// var matrix = {
-//     flip: function()
-//     {
-//        return  [1,0,0,
-//         0,1,0,
-//     0,0,1]
-//     }
-// };
 
 
