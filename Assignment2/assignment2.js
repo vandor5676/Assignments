@@ -85,14 +85,18 @@ function chnageDirection()
 {
     directionMutiplyer=directionMutiplyer*-1;
     angleIncroment = angleIncroment * -1;
-    //alert(angleIncroment +"___" + directionMutiplyer);
 }
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
 
-   
-    angle = angle >=2*3.14159 || angle <=-2*3.14159 ?0:angle+=angleIncroment;
-    matrix = angle >=1*3.14159 ||angle <=-1*3.14159 ?[1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]:[-1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]
+    angle = angle >=2*3.14159 ?0:angle+=angleIncroment;
+    if (angle < 0) {
+        angle = 0;
+        chnageDirection();
+    }
+    else{
+        matrix = angle >=1*3.14159  ?[1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]:[-1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]
+    }
 
     //update parameters
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
