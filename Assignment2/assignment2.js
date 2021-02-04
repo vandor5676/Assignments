@@ -33,12 +33,16 @@ window.onload = function init()
         const numVerts = 100;
     var radius = 0.8
     circlePoints = [];
+    circlePoints.push(vec2(-.2,0));
     for (var i = 0; i < numVerts; i++) {
         var u = i / numVerts;
         var angle = u * 3.14159 * 2.0;
-        var pos = vec2(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        var a=0.28;//for fish curve
+      //  var pos = vec2(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        var pos = vec2(a*Math.cos(angle)-((a*Math.pow(Math.sin(angle),2))/Math.sqrt(2)) , (a*Math.cos(angle)*Math.sin(angle)) );
         circlePoints.push(pos);
     }
+    circlePoints.push(circlePoints[1]);
     //
     //  Configure WebGL
     //
@@ -54,7 +58,7 @@ window.onload = function init()
 
     var bufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
-    gl.bufferData( gl.ARRAY_BUFFER, points, gl.STATIC_DRAW );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(circlePoints), gl.STATIC_DRAW );
 
     // Associate out shader variables with our data buffer
 
@@ -112,13 +116,13 @@ function render() {
         chnageDirection();
     }
     else{
-        matrix = angle >=1*3.14159  ?[1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]:[-1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]
+        matrix = angle >=1*3.14159  ?[1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,Math.sin(2*angle)/10,0,0,1]:[-1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,Math.sin(2*angle)/10,0,0,1]
     }
 
     //update parameters
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
     $("#debugP").text(angle.toFixed(2));
-    gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
+    gl.drawArrays( gl.TRIANGLE_FAN, 0, 102 );
 
     setTimeout(
         function () {requestAnimationFrame(render);},
