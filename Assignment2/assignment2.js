@@ -5,7 +5,7 @@ var points ,points2;
 var LRTranslation, matrixLocation ;
 var backAndForth = 0.0; 
 var matrix =[-1,0,0,0,1,0,0,0,1];
-var angle =0;
+var angle =0,directionMutiplyer = 1,angleIncroment=0.05;
 var program;
 
 
@@ -75,29 +75,28 @@ window.onload = function init()
 
 function start()
 {
-    alert();
+    angleIncroment = 0.05;
 }
 function stop()
 {
-    alert();
+    angleIncroment = 0;
 }
 function chnageDirection()
 {
-    alert();
+    directionMutiplyer=directionMutiplyer*-1;
+    angleIncroment = angleIncroment * -1;
+    //alert(angleIncroment +"___" + directionMutiplyer);
 }
 function render() {
     gl.clear( gl.COLOR_BUFFER_BIT );
 
-    //make shape go back and forth,  
-    backAndForth = (Math.cos(angle)/1.43);
-
-    matrix = angle >=1*3.14159 ?[1,0,Math.cos(angle)/1.43,0,1,0,0,0,1]:[-1,0,Math.cos(angle)/1.43,0,1,0,0,0,1]
-    angle = angle >=2*3.14159 ?0:angle+=0.05;
+   
+    angle = angle >=2*3.14159 || angle <=-2*3.14159 ?0:angle+=angleIncroment;
+    matrix = angle >=1*3.14159 ||angle <=-1*3.14159 ?[1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]:[-1*directionMutiplyer,0,(Math.cos(angle)/1.43),0,1,0,0,0,1]
 
     //update parameters
-    gl.uniform1f(LRTranslation, backAndForth=0);
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
-    
+    $("#debugP").text(angle.toFixed(2));
     gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4 );
 
     setTimeout(

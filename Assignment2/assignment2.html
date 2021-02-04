@@ -17,7 +17,7 @@ void main()
   
   vec2 xypos = vec2((aPosition.x  + uLRTranslation),0.5 +aPosition.y);
   xypos = (vec3(xypos,1) * u_matrix).xy; //mat3(-1,0,0,0,1,0,0,0,1)).xy;
-  
+
   gl_Position =vec4(xypos,0,1);
   
 
@@ -54,6 +54,7 @@ void main()
       <option value="2">Blue</option>
       <option value="3">Yellow</option>
   </select>
+  <p id="debugP">forDebug</p>
 </body>
 
 </html>
