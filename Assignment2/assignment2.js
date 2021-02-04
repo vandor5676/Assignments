@@ -7,6 +7,7 @@ var backAndForth = 0.0;
 var matrix =[-1,0,0,0,1,0,0,0,1];
 var angle =0,directionMutiplyer = 1,angleIncroment=0.05, savedAngleIncroment;
 var program;
+var circlePoints;
 
 
 window.onload = function init()
@@ -29,6 +30,15 @@ window.onload = function init()
           0.5,0.1
         ]);
 
+        const numVerts = 100;
+    var radius = 0.8
+    circlePoints = [];
+    for (var i = 0; i < numVerts; i++) {
+        var u = i / numVerts;
+        var angle = u * 3.14159 * 2.0;
+        var pos = vec2(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        circlePoints.push(pos);
+    }
     //
     //  Configure WebGL
     //
@@ -55,10 +65,6 @@ window.onload = function init()
     //lookups
     LRTranslation = gl.getUniformLocation(program, "uLRTranslation");
     matrixLocation = gl.getUniformLocation(program, "u_matrix");
-
-    // Set the matrix.
-   // gl.uniformMatrix3fv(matrixLocation, false, matrix);
-
 
 
     $("#startButton").click(start);
@@ -92,7 +98,6 @@ function stop()
 //change the animations direction
 function chnageDirection()
 {
-  
     directionMutiplyer=directionMutiplyer*-1;
     angleIncroment = angleIncroment * -1;
     savedAngleIncroment =savedAngleIncroment *-1;
