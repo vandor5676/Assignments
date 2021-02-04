@@ -5,8 +5,12 @@
 #version 300 es
 
 in vec4 aPosition;
+in vec4 aColor;//attribute
+
 uniform float uLRTranslation;
 uniform mat3 u_matrix;
+
+out vec4 vColor;//vertex
 
 void main()
 {
@@ -19,9 +23,7 @@ void main()
   xypos = (vec3(xypos,1) * u_matrix).xy; //mat3(-1,0,0,0,1,0,0,0,1)).xy;
 
   gl_Position =vec4(xypos,0,1);
-  
-
-  //vec2 position = (u_matrix * vec3(a_position, 1)).xy;
+  vColor = aColor;
 }
 </script>
 
@@ -30,11 +32,13 @@ void main()
 
 precision mediump float;
 
+in vec4 vColor;
 out vec4  fColor;
 
 void main()
 {
-    fColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+    //fColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+    fColor = vColor;
 }
 </script>
 
@@ -49,11 +53,12 @@ void main()
     <button id="startButton">Start</button>
     <button id="stopButton">Stop</button>
     <button id="directionButton">Change Direction</button>
-    <select id="Controls" size="4">
+    <select id="colorControls" size="5">
       <option value="0">Red</option>
       <option value="1">Green</option>
       <option value="2">Blue</option>
       <option value="3">Yellow</option>
+      <option value="4">Reset</option>
   </select>
   <p id="debugP">forDebug</p>
 

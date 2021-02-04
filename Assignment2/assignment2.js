@@ -7,7 +7,8 @@ var backAndForth = 0.0;
 var matrix =[-1,0,0,0,1,0,0,0,1];
 var angle =0,directionMutiplyer = 1,angleIncroment=0.05, savedAngleIncroment;
 var program;
-var circlePoints;
+var FishPoints;
+var colorArray = [];
 
 
 window.onload = function init()
@@ -32,17 +33,17 @@ window.onload = function init()
 
         const numVerts = 100;
     var radius = 0.8
-    circlePoints = [];
-    circlePoints.push(vec2(-.2,0));
+    FishPoints = [];
+    FishPoints.push(vec2(-.2,0));
     for (var i = 0; i < numVerts; i++) {
         var u = i / numVerts;
         var angle = u * 3.14159 * 2.0;
         var a=0.28;//for fish curve
       //  var pos = vec2(Math.cos(angle) * radius, Math.sin(angle) * radius);
         var pos = vec2(a*Math.cos(angle)-((a*Math.pow(Math.sin(angle),2))/Math.sqrt(2)) , (a*Math.cos(angle)*Math.sin(angle)) );
-        circlePoints.push(pos);
+        FishPoints.push(pos);
     }
-    circlePoints.push(circlePoints[1]);
+    FishPoints.push(FishPoints[1]);
     //
     //  Configure WebGL
     //
@@ -58,13 +59,28 @@ window.onload = function init()
 
     var bufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(circlePoints), gl.STATIC_DRAW );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(FishPoints), gl.STATIC_DRAW );
 
     // Associate out shader variables with our data buffer
 
     var aPosition = gl.getAttribLocation( program, "aPosition" );
     gl.vertexAttribPointer( aPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( aPosition );
+
+    //for color
+    //
+    var colors = [];
+    var numPoints = 102;
+    for (var i = 0; i < numPoints; i++)colors.push(0.3, 0.01, 0.7);
+
+    var cBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW); //new Float32Array(colors)
+
+    var aColor = gl.getAttribLocation(program, "aColor");
+    gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(aColor);
+    //
 
     //lookups
     LRTranslation = gl.getUniformLocation(program, "uLRTranslation");
@@ -75,7 +91,7 @@ window.onload = function init()
     $("#stopButton").click(stop);
     $("#directionButton").click(chnageDirection);
     $("#speedSlider").on('input',sliderChange);
-
+    $("#colorControls").on('input',setColor)
 
     render();
 };
@@ -122,12 +138,29 @@ function render() {
     //update parameters
     gl.uniformMatrix3fv(matrixLocation, false, matrix);
     $("#debugP").text(angle.toFixed(2));
+
+    //colors
+    var numPoints = 102;
+    var colors = [];
+    for (var i = 0; i < numPoints; i++)colors.push(...colorArray);
+
+    gl.bufferSubData(gl.ARRAY_BUFFER, FishPoints, new Float32Array(colors));
+    gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 102 );
 
     setTimeout(
         function () {requestAnimationFrame(render);},
         5.0// speed
     );
+}
+function setColor()
+{
+    var color =  $("#colorControls option:selected").text();
+    if (color == "Red") colorArray = [1, 0, 0];
+    else if (color == "Green") colorArray = [0, 1, 0];
+    else if (color == "Blue") colorArray = [0, 0, 1];
+    else if (color == "Yellow") colorArray = [1, 1, 0];
+    else if (color == "Reset") colorArray = [0.3, 0.01, 0.7];
 }
 
 
