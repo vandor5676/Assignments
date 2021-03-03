@@ -3,7 +3,7 @@
 var canvas;
 var gl;
 
-var numPositions  = 36;
+var numPositions  = 12;
 
 var positions = [];
 var colors = [];
@@ -17,6 +17,32 @@ var theta = [0, 0, 0];
 
 var thetaLoc;
 
+var centeringconstY = 0.3;
+var centeringconstZ = 0.406;
+    
+var vertices = [
+        
+    vec4(0.0, 0.3-centeringconstY,  0.812-centeringconstZ, 1.0),//0
+    vec4(0.5,  0.0-centeringconstY,  0.0-centeringconstZ, 1.0),//1
+    vec4(0.0, 0.812-centeringconstY,  0.0-centeringconstZ, 1.0),//2
+    vec4(-0.5,  0.0-centeringconstY,  0.0-centeringconstZ, 1.0)//3
+    
+];
+
+var vertexColors = [
+    vec4(0.0, 0.5, 0.0, 1.0),  // black
+    vec4(1.0, 0.0, 0.0, 1.0),  // red
+    vec4(1.0, 1.0, 0.0, 1.0),  // yellow
+    vec4(0.0, 1.0, 0.0, 1.0),  // green
+];
+
+var indices = [
+    0,1,2,
+    1,0,3,
+    2,3,0,
+    3,2,1
+];
+
 window.onload = function init()
 {
     canvas = document.getElementById("gl-canvas");
@@ -24,7 +50,7 @@ window.onload = function init()
     gl = canvas.getContext('webgl2');
     if (!gl) alert("WebGL 2.0 isn't available");
 
-    colorCube();
+    //colorCube();
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -37,9 +63,16 @@ window.onload = function init()
     var program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
+    // array element buffer
+    //i think this is where the order of verticies is defined
+    var iBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
+
+
     var cBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertexColors), gl.STATIC_DRAW);
 
     var colorLoc = gl.getAttribLocation( program, "aColor" );
     gl.vertexAttribPointer( colorLoc, 4, gl.FLOAT, false, 0, 0 );
@@ -47,7 +80,7 @@ window.onload = function init()
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(positions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
 
 
     var positionLoc = gl.getAttribLocation(program, "aPosition");
@@ -81,42 +114,11 @@ function colorCube()
     // quad(5, 4, 0, 1);
 }
 
+
+
 function quad(a, b, c, d)
 {
-    var centeringconstY = 0.3;
-    var centeringconstZ = 0.406;
-    var vertices = [
-        // vec4(-0.5, -0.5,  0.5, 1.0),
-        // vec4(-0.5,  0.5,  0.5, 1.0),
-        // vec4(0.5,  0.5,  0.5, 1.0),
-        // vec4(0.5, -0.5,  0.5, 1.0),
-        // vec4(-0.5, -0.5, -0.5, 1.0),
-        // vec4(-0.5,  0.5, -0.5, 1.0),
-        // vec4(0.5,  0.5, -0.5, 1.0),
-        // vec4(0.5, -0.5, -0.5, 1.0)
-        
-        vec4(0.0, 0.3-centeringconstY,  0.812-centeringconstZ, 1.0),//0
-        vec4(0.5,  0.0-centeringconstY,  0.0-centeringconstZ, 1.0),//1
-        vec4(0.0, 0.812-centeringconstY,  0.0-centeringconstZ, 1.0),//2
-        vec4(-0.5,  0.0-centeringconstY,  0.0-centeringconstZ, 1.0)//3
-        
-    ];
-
-    // for(var i =0; i<4;i++)
-    // {
-    //     vertices[i] = vec4(vertices[i].xAxis,vertices[i].yAxis,vertices[i],vertices[i][3])
-    // }
-
-    var vertexColors = [
-        vec4(0.0, 0.5, 0.0, 1.0),  // black
-        vec4(1.0, 0.0, 0.0, 1.0),  // red
-        vec4(1.0, 1.0, 0.0, 1.0),  // yellow
-        vec4(0.0, 1.0, 0.0, 1.0),  // green
-        // vec4(0.0, 0.0, 1.0, 1.0),  // blue
-        // vec4(1.0, 0.0, 1.0, 1.0),  // magenta
-        // vec4(0.0, 1.0, 1.0, 1.0),  // cyan
-        // vec4(1.0, 1.0, 1.0, 1.0)   // white
-    ];
+    
 
     // We need to parition the quad into two triangles in order for
     // WebGL to be able to render it.  In this case, we create two
@@ -142,6 +144,6 @@ function render()
     theta[axis] += 1.0;
     gl.uniform3fv(thetaLoc, theta);
 
-    gl.drawArrays(gl.TRIANGLES, 0, numPositions);
+    gl.drawElements(gl.TRIANGLES, numPositions, gl.UNSIGNED_BYTE, 0);
     requestAnimationFrame(render);
 }
