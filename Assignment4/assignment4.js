@@ -13,28 +13,42 @@ var axis = 0;
 var theta = [0, 0, 0];
 var translation = [0, 0, 0];
 var scale = [1, 1, 1];
+var mat1 = translate(0.3,0,0);
+var mat2 = rotateY(-45);
+var affine1 = flatten(mat4());
 
 var thetaLoc;
 var uTranslation;
 var uScale;
+var uAffine1;
 
-var centeringconstY = 0.3;
-var centeringconstZ = 0.406;
+var centeringconstY = 0.433;
+var centeringconstZ = 0.408;
     
 var vertices = [
         
-    vec4(0.0, 0.3-centeringconstY,  0.812-centeringconstZ, 1.0),//0
+    vec4(0.0, 0.433-centeringconstY,  0.816-centeringconstZ, 1.0),//0
     vec4(0.5,  0.0-centeringconstY,  0.0-centeringconstZ, 1.0),//1
-    vec4(0.0, 0.812-centeringconstY,  0.0-centeringconstZ, 1.0),//2
+    vec4(0.0, 0.866-centeringconstY,  0.0-centeringconstZ, 1.0),//2
     vec4(-0.5,  0.0-centeringconstY,  0.0-centeringconstZ, 1.0)//3
     
 ];
 
 var vertexColors = [
-    vec4(0.0, 0.5, 0.0, 1.0),  // black
-    vec4(1.0, 0.0, 0.0, 1.0),  // red
-    vec4(1.0, 1.0, 0.0, 1.0),  // yellow
+    vec4(0.7, 0.7, 0.7, 1.0),  // black
+    vec4(1.0, 0.5, 0.5, 1.0),  // red
+    vec4(0.2, 0.4, 0.9, 1.0),  // yellow
     vec4(0.0, 1.0, 0.0, 1.0),  // green
+    // vec4(Math.random(), Math.random(),Math.random(), 1.0), 
+    // vec4(Math.random(), Math.random(),Math.random(), 1.0), 
+    // vec4(Math.random(), Math.random(),Math.random(), 1.0), 
+    // vec4(Math.random(), Math.random(),Math.random(), 1.0),
+
+    // vec4(0.0245019730168341, 0.9200946361333009, 0.06263875857974943, 1),
+    // vec4(0.8683096346425287, 0.10982332488784863, 0.4627265576886377, 1), 
+    // vec4(0.5660531495244645, 0.5364220663020884, 0.6008126141768515, 1) ,
+    // vec4(0.4042555652002686, 0.13026390965949775, 0.5537132974235977, 1),
+
 ];
 
 var indices = [
@@ -65,7 +79,7 @@ window.onload = function init()
     gl.useProgram(program);
 
     // array element buffer
-    //i think this is where the order of verticies is defined
+    //i think this is where the order of verticies is defined for a face 
     var iBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
@@ -90,6 +104,7 @@ window.onload = function init()
     thetaLoc = gl.getUniformLocation(program, "uTheta");
     uTranslation = gl.getUniformLocation(program, "uTranslation");
     uScale = gl.getUniformLocation(program, "uScale");
+    uAffine1 = gl.getUniformLocation(program, "uAffine1");
     
     //event listeners for buttons
     initButtons();
@@ -104,6 +119,7 @@ function render()
     gl.uniform3fv(thetaLoc, theta);
     gl.uniform3fv(uTranslation, translation);
     gl.uniform3fv(uScale, scale);
+    gl.uniformMatrix4fv(uAffine1,false,affine1 );
 
     gl.drawElements(gl.TRIANGLES, numPositions, gl.UNSIGNED_BYTE, 0);
     requestAnimationFrame(render);

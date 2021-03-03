@@ -79,6 +79,17 @@ function initButtons() {
         axis = zAxis;
         scale[axis] += -0.1;
     };
+    
+    // affine transformation order buttons
+    document.getElementById("affineButton1").onclick = function () {
+        affine1 = flatten(mult(mat1 ,mat2));
+
+    };
+    document.getElementById("affineButton2").onclick = function () {
+         affine1 = flatten(mult(mat2 , mat1));
+    };
+
+
 
     //reset
     document.getElementById("reset").onclick = function () {
@@ -86,5 +97,7 @@ function initButtons() {
          theta = [0, 0, 0];
          translation = [0, 0, 0];
          scale = [1, 1, 1];
+         affine1 = flatten(mat4());
+         affine2 = flatten(mat4());
     };
 }

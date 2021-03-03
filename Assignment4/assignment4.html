@@ -11,6 +11,7 @@ out vec4 vColor;
 uniform vec3 uTheta;
 uniform vec3 uTranslation;
 uniform vec3 uScale;
+uniform mat4 uAffine1;
 
 void main()
 {
@@ -44,7 +45,7 @@ void main()
                     0.0, 0.0, 0.0, 1.0);
 
     vColor = aColor;
-    gl_Position = rz * ry * rx * scale * aPosition;
+    gl_Position = rz * ry * rx * scale * uAffine1 * aPosition;
     gl_Position.z = -gl_Position.z;
 }
 </script>
@@ -103,6 +104,11 @@ Oops ... your browser doesn't support the HTML5 canvas element
 <button id= "-xButtonScale">Scale -X</button>
 <button id= "-yButtonScale">Scale -Y</button>
 <button id= "-zButtonScale">Scale -Z</button>
+
+<div style="height: 30px;"></div>
+
+<button id="affineButton1">Translate 0.3 +X & Rotate 45 -Y</button>
+<button id="affineButton2"> Rotate 45 -Y & Translate 0.3 +X </button>
 
 <div style="height: 30px;"></div>
 
