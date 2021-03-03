@@ -1,3 +1,8 @@
+// <!-- File name: assignment4.js-->
+// <!-- Programmer name: Shane Steiner -->
+// <!-- Description: defines indecies and colors and renders shape -->
+// <!-- Creation Date: 3/3/2021 -->
+
 "use strict";
 
 var canvas;
@@ -39,6 +44,9 @@ var vertexColors = [
     vec4(1.0, 0.5, 0.5, 1.0),  // red
     vec4(0.2, 0.4, 0.9, 1.0),  // yellow
     vec4(0.0, 1.0, 0.0, 1.0),  // green
+
+    //other color options
+
     // vec4(Math.random(), Math.random(),Math.random(), 1.0), 
     // vec4(Math.random(), Math.random(),Math.random(), 1.0), 
     // vec4(Math.random(), Math.random(),Math.random(), 1.0), 
@@ -58,6 +66,7 @@ var indices = [
     3,2,1
 ];
 
+//gets everything ready to render the shape
 window.onload = function init()
 {
     canvas = document.getElementById("gl-canvas");
@@ -112,6 +121,7 @@ window.onload = function init()
     render();
 }
 
+//renders the shape
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
