@@ -5,17 +5,18 @@ var gl;
 
 var numPositions  = 12;
 
-var positions = [];
-var colors = [];
-
 var xAxis = 0;
 var yAxis = 1;
 var zAxis = 2;
 
 var axis = 0;
 var theta = [0, 0, 0];
+var translation = [0, 0, 0];
+var scale = [1, 1, 1];
 
 var thetaLoc;
+var uTranslation;
+var uScale;
 
 var centeringconstY = 0.3;
 var centeringconstZ = 0.406;
@@ -82,67 +83,27 @@ window.onload = function init()
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
 
-
     var positionLoc = gl.getAttribLocation(program, "aPosition");
     gl.vertexAttribPointer(positionLoc, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionLoc);
 
     thetaLoc = gl.getUniformLocation(program, "uTheta");
-
+    uTranslation = gl.getUniformLocation(program, "uTranslation");
+    uScale = gl.getUniformLocation(program, "uScale");
+    
     //event listeners for buttons
-
-    document.getElementById( "xButton" ).onclick = function () {
-        axis = xAxis;
-    };
-    document.getElementById( "yButton" ).onclick = function () {
-        axis = yAxis;
-    };
-    document.getElementById( "zButton" ).onclick = function () {
-        axis = zAxis;
-    };
+    initButtons();
 
     render();
-}
-
-function colorCube()
-{
-    quad(0, 1, 2);
-    quad(1, 0, 3);
-    quad(2, 3, 0);
-    quad(3, 2, 1);
-    // quad(4, 5, 6, 7);
-    // quad(5, 4, 0, 1);
-}
-
-
-
-function quad(a, b, c, d)
-{
-    
-
-    // We need to parition the quad into two triangles in order for
-    // WebGL to be able to render it.  In this case, we create two
-    // triangles from the quad indices
-
-    //vertex color assigned by the index of the vertex
-
-    var indices = [a, b, c];
-
-    for ( var i = 0; i < indices.length; ++i ) {
-        positions.push( vertices[indices[i]] );
-        //colors.push( vertexColors[indices[i]] );
-
-        // for solid colored faces use
-        colors.push(vertexColors[a]);
-    }
 }
 
 function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    theta[axis] += 1.0;
     gl.uniform3fv(thetaLoc, theta);
+    gl.uniform3fv(uTranslation, translation);
+    gl.uniform3fv(uScale, scale);
 
     gl.drawElements(gl.TRIANGLES, numPositions, gl.UNSIGNED_BYTE, 0);
     requestAnimationFrame(render);
