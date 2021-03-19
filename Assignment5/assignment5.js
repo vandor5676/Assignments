@@ -12,8 +12,6 @@ function main() {
   // creates buffers with position, normal, texcoord, and vertex color
   // data for primitives by calling gl.createBuffer, gl.bindBuffer,
   // and gl.bufferData
-  const sphereBufferInfo = primitives.createSphereWithVertexColorsBufferInfo(gl, 10, 12, 6);
-  const cubeBufferInfo   = primitives.createCubeWithVertexColorsBufferInfo(gl, 20);
   const coneBufferInfo   = primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
 
   // setup GLSL program
@@ -28,21 +26,12 @@ function main() {
   var cameraHeight = 50;
 
   // Uniforms for each object.
-  var sphereUniforms = {
-    u_colorMult: [0.5, 1, 0.5, 1],
-    u_matrix: m4.identity(),
-  };
-  var cubeUniforms = {
-    u_colorMult: [1, 0.5, 0.5, 1],
-    u_matrix: m4.identity(),
-  };
   var coneUniforms = {
     u_colorMult: [0.5, 0.5, 1, 1],
     u_matrix: m4.identity(),
   };
-  var sphereTranslation = [  0, 0, 0];
-  var cubeTranslation   = [-40, 0, 0];
-  var coneTranslation   = [ 40, 0, 0];
+
+  var coneTranslation   = [ 0, 0, 0];
 
   function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation) {
     var matrix = m4.translate(viewProjectionMatrix,
@@ -86,10 +75,6 @@ function main() {
 
     var viewProjectionMatrix = m4.multiply(projectionMatrix, viewMatrix);
 
-    var sphereXRotation =  time;
-    var sphereYRotation =  time;
-    var cubeXRotation   = -time;
-    var cubeYRotation   =  time;
     var coneXRotation   =  time;
     var coneYRotation   = -time;
 
@@ -97,35 +82,6 @@ function main() {
 
     gl.useProgram(programInfo.program);
 
-    // Setup all the needed attributes.
-    webglUtils.setBuffersAndAttributes(gl, programInfo, sphereBufferInfo);
-
-    sphereUniforms.u_matrix = computeMatrix(
-        viewProjectionMatrix,
-        sphereTranslation,
-        sphereXRotation,
-        sphereYRotation);
-
-    // Set the uniforms we just computed
-    webglUtils.setUniforms(programInfo, sphereUniforms);
-
-    gl.drawArrays(gl.TRIANGLES, 0, sphereBufferInfo.numElements);
-
-    // ------ Draw the cube --------
-
-    // Setup all the needed attributes.
-    webglUtils.setBuffersAndAttributes(gl, programInfo, cubeBufferInfo);
-
-    cubeUniforms.u_matrix = computeMatrix(
-        viewProjectionMatrix,
-        cubeTranslation,
-        cubeXRotation,
-        cubeYRotation);
-
-    // Set the uniforms we just computed
-    webglUtils.setUniforms(programInfo, cubeUniforms);
-
-    gl.drawArrays(gl.TRIANGLES, 0, cubeBufferInfo.numElements);
 
     // ------ Draw the cone --------
 
