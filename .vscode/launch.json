@@ -2,9 +2,9 @@
     "configurations": [
         {
             "type": "pwa-chrome",
-            "name": "http://127.0.0.1:5501/Assignment5/assignment5.html",
+            "name": "assignment5",
             "request": "launch",
-            "url": "http://127.0.0.1:5501/Assignment5/assignment5.html"
+            "url": "http://127.0.0.1:5501/assignment5New/shadedCube.html"
         }
     ]
 }

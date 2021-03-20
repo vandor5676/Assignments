@@ -32,6 +32,10 @@ function main() {
     u_matrix: mat4(),
   };
 
+  function MVnewToM4(vec4, m4)
+  {
+    
+  }
 
 
   function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation, zRotation) {
