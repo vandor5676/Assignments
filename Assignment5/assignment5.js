@@ -12,7 +12,7 @@ function main() {
   // creates buffers with position, normal, texcoord, and vertex color
   // data for primitives by calling gl.createBuffer, gl.bindBuffer,
   // and gl.bufferData
-  var coneBufferInfo   = primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
+  var coneBufferInfo = primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, 10, 0, 20, 12, 1, true, false);
 
   // setup GLSL program
   var programInfo = webglUtils.createProgramInfo(gl, ["vertex-shader-3d", "fragment-shader-3d"]);
@@ -23,28 +23,36 @@ function main() {
 
   var fieldOfViewRadians = degToRad(60);
   var cameraHeight = 50;
-  
+
   // Uniforms for each object.
   var coneUniforms = {
     u_colorMult: [0.5, 0.5, 1, 1],
     u_matrix: m4.identity(),
   };
-  
-  
-  
-  function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation,zRotation) {
+
+
+
+  function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation, zRotation) {
     var matrix = m4.translate(viewProjectionMatrix,
-        translation[0],
-        translation[1],
-        translation[2]);
-        matrix = m4.xRotate(matrix, xRotation);
-        matrix = m4.yRotate(matrix, yRotation);
-        return m4.zRotate(matrix, zRotation);
-    }
-    
+      translation[0],
+      translation[1],
+      translation[2]);
+    matrix = m4.xRotate(matrix, xRotation);
+    matrix = m4.yRotate(matrix, yRotation);
+    return m4.zRotate(matrix, zRotation);
+  }
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
   requestAnimationFrame(drawScene);
 
-  
+
   // Setup a ui.
   //
   var coneHeight = 20;
@@ -55,60 +63,67 @@ function main() {
   var cordShiftZ = 0;
 
   var rotateX = 0;
-  var rotateY =0;
-  var rotateZ =0;
-  
+  var rotateY = 0;
+  var rotateZ = 0;
+
   //cone propertys
-  webglLessonsUI.setupSlider("#ConeHeight", {value: (coneHeight), slide:updateBase , min: -40, max: 40});
+  webglLessonsUI.setupSlider("#ConeHeight", { value: (coneHeight), slide: updateBase, min: -40, max: 40 });
   function updateBase(event, ui) {
     coneHeight = (ui.value);
-    drawScene();
+    //drawScene();
   }
-  webglLessonsUI.setupSlider("#ConeBaseWidth", {value: (coneBaseWidth), slide:updateHeight, min: -40, max: 40});
-   function updateHeight(event, ui) {
+  webglLessonsUI.setupSlider("#ConeBaseWidth", { value: (coneBaseWidth), slide: updateHeight, min: -40, max: 40 });
+  function updateHeight(event, ui) {
     coneBaseWidth = (ui.value);
-    drawScene();
+    //drawScene();
   }
   //cord shift
-  webglLessonsUI.setupSlider("#cordShiftX", {value: (cordShiftX), slide:updateX, min: -40, max: 40});
-   function updateX(event, ui) {
+  webglLessonsUI.setupSlider("#cordShiftX", { value: (cordShiftX), slide: updateX, min: -40, max: 40 });
+  function updateX(event, ui) {
     cordShiftX = (ui.value);
-    drawScene();
+   // drawScene();
   }
-  webglLessonsUI.setupSlider("#cordShiftY", {value: (cordShiftY), slide:updateY, min: -40, max: 40});
-   function updateY(event, ui) {
+  webglLessonsUI.setupSlider("#cordShiftY", { value: (cordShiftY), slide: updateY, min: -40, max: 40 });
+  function updateY(event, ui) {
     cordShiftY = (ui.value);
-    drawScene();
+   // drawScene();
   }
-  webglLessonsUI.setupSlider("#cordShiftZ", {value: (cordShiftZ), slide:updateZ, min: -40, max: 40});
-   function updateZ(event, ui) {
+  webglLessonsUI.setupSlider("#cordShiftZ", { value: (cordShiftZ), slide: updateZ, min: -40, max: 40 });
+  function updateZ(event, ui) {
     cordShiftZ = (ui.value);
-    drawScene();
+  //  drawScene();
   }
 
   //rotate 
-  webglLessonsUI.setupSlider("#rotateX", {value: (rotateX), slide:updateX, step:0.02, min: 0, max: 2*3.14});
-   function updateX(event, ui) {
+  webglLessonsUI.setupSlider("#rotateX", { value: (rotateX), slide: updateRotateX, step: 0.02, min: 0, max: 2 * 3.14 });
+  function updateRotateX(event, ui) {
     rotateX = (ui.value);
-    drawScene();
+   // drawScene();
   }
-  webglLessonsUI.setupSlider("#rotateY", {value: (rotateY), slide:updateY,step:0.02, min: 0, max: 2*3.14});
-   function updateY(event, ui) {
+  webglLessonsUI.setupSlider("#rotateY", { value: (rotateY), slide: updateRotateY, step: 0.02, min: 0, max: 2 * 3.14 });
+  function updateRotateY(event, ui) {
     rotateY = (ui.value);
-    drawScene();
+  //  drawScene();
   }
-  webglLessonsUI.setupSlider("#rotateZ", {value: (rotateZ), slide:updateZ,step:0.02, min: 0, max:  2*3.14});
-   function updateZ(event, ui) {
+  webglLessonsUI.setupSlider("#rotateZ", { value: (rotateZ), slide: updateRotateZ, step: 0.02, min: 0, max: 2 * 3.14 });
+  function updateRotateZ(event, ui) {
     rotateZ = (ui.value);
-    drawScene();
+    //drawScene();
   }
 
+  var colorPicker = document.querySelector("#shapeColor");
+  colorPicker.addEventListener("input", updateFirst, false);
+  function updateFirst(event) {
+    coneUniforms.u_colorMult[0] = hexToRgb(event.target.value).r / 255;
+    coneUniforms.u_colorMult[1] = hexToRgb(event.target.value).g / 255;
+    coneUniforms.u_colorMult[2] = hexToRgb(event.target.value).b / 255;
+  }
 
   // Draw the scene.
   function drawScene(time) {
     time *= 0.0005;
 
-    coneBufferInfo   = primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, coneBaseWidth, 0, coneHeight, 12, 1, true, false);
+    coneBufferInfo = primitives.createTruncatedConeWithVertexColorsBufferInfo(gl, coneBaseWidth, 0, coneHeight, 12, 1, true, false);
 
     webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -126,7 +141,7 @@ function main() {
     // Compute the projection matrix
     var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     var projectionMatrix =
-        m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
+      m4.perspective(fieldOfViewRadians, aspect, 1, 2000);
 
     // Compute the camera's matrix using look at.
     var cameraPosition = [0, 0, 100];
@@ -145,19 +160,19 @@ function main() {
     gl.useProgram(programInfo.program);
 
     // ------ Draw the cone --------
-    var coneXRotation   =  rotateX;
-    var coneYRotation   =  rotateY;
-    var coneTranslation   = [ cordShiftX, cordShiftY, cordShiftZ];
+    var coneXRotation = rotateX;
+    var coneYRotation = rotateY;
+    var coneTranslation = [cordShiftX, cordShiftY, cordShiftZ];
 
     // Setup all the needed attributes.
     webglUtils.setBuffersAndAttributes(gl, programInfo, coneBufferInfo);
 
     coneUniforms.u_matrix = computeMatrix(
-        viewProjectionMatrix,
-        coneTranslation,
-        coneXRotation,
-        coneYRotation,
-        rotateZ);
+      viewProjectionMatrix,
+      coneTranslation,
+      coneXRotation,
+      coneYRotation,
+      rotateZ);
 
     // Set the uniforms we just computed
     webglUtils.setUniforms(programInfo, coneUniforms);
