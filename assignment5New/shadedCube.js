@@ -1,9 +1,10 @@
 "use strict";
 
+var gl;
+var program;
 var shadedCube = function () {
 
    var canvas;
-   var gl;
 
    var numPositions = 36;
 
@@ -36,7 +37,6 @@ var shadedCube = function () {
    var ambientColor, diffuseColor, specularColor;
    var modelViewMatrix, projectionMatrix;
    var viewerPos;
-   var program;
 
    var xAxis = 0;
    var yAxis = 1;
@@ -79,7 +79,7 @@ var shadedCube = function () {
       quad(4, 5, 6, 7);
       quad(5, 4, 0, 1);
    }
-   //ui
+   //---- ui ----
    //----
    var scaleFactor =1;
    var cordShiftX = 0;
@@ -109,6 +109,36 @@ var shadedCube = function () {
     cordShiftZ = (ui.value);
   }
 
+  //rotate 
+  webglLessonsUI.setupSlider("#rotateX", { value: (rotateX), slide: updateRotateX, step: 0.02, min: 0, max: 180 });
+  function updateRotateX(event, ui) {
+    rotateX = (ui.value);
+  }
+  webglLessonsUI.setupSlider("#rotateY", { value: (rotateY), slide: updateRotateY, step: 0.02, min: 0, max: 180 });
+  function updateRotateY(event, ui) {
+    rotateY = (ui.value);
+  }
+  webglLessonsUI.setupSlider("#rotateZ", { value: (rotateZ), slide: updateRotateZ, step: 0.02, min: 0, max: 180 });
+  function updateRotateZ(event, ui) {
+    rotateZ = (ui.value);
+  }
+ //shininess
+ webglLessonsUI.setupSlider("#shininess", { value: (rotateZ), slide: updateshine, step: 0.02, min: 5, max: 100 });
+ function updateshine(event, ui) {
+   materialShininess = (ui.value);
+ }
+ //projection
+ webglLessonsUI.setupSlider("#projection", { value: (rotateZ), slide: updateProjection, step: 1, min: 0, max: 1,name:"Projection 1=ortho 0=perspective" });
+ function updateProjection(event, ui) {
+   if(ui.value == 0)
+   {
+      projectionMatrix = ProjectionPerspective(projectionMatrix);
+   }
+   else
+   {
+      projectionMatrix = ProjectionOrtho(projectionMatrix);
+   }
+ }
 
    var colorPicker = document.querySelector("#shapeColor");
   colorPicker.addEventListener("input", updateFirst, false);
@@ -164,16 +194,12 @@ var shadedCube = function () {
 
       viewerPos = vec3(0.0, 0.0, -20.0);
 
-      projectionMatrix = ortho(-1, 1, -1, 1, -100, 100);
-     
-      var fovy = 10000, aspect=1, near=0.01, far=100;
-      projectionMatrix = perspective(fovy, aspect, near, far);
-      var translationMat2 = mat4(1,0,0,0,
-         0,1,0,0,
-         0,0,1,-2,
-         0,0,0,1);
+      
+      projectionMatrix = ProjectionPerspective(projectionMatrix);
+      
+      
 
-      projectionMatrix  =mult(projectionMatrix,translationMat2);
+     
       
       var ambientProduct = mult(lightAmbient, materialAmbient);
      
@@ -192,17 +218,11 @@ var shadedCube = function () {
       gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
          lightPosition);
 
-      gl.uniform1f(gl.getUniformLocation(program,
-         "uShininess"), materialShininess);
-
-      gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
-         false, flatten(projectionMatrix));
-
-
       render();
    }
 
    var render = function () {
+      
 
       var scaleMat = mat4(scaleFactor,0,0,0,
                           0,scaleFactor,0,0,
@@ -221,11 +241,11 @@ var shadedCube = function () {
       modelViewMatrix = mat4();
       modelViewMatrix = mult( modelViewMatrix,scaleMat);
       modelViewMatrix = mult( modelViewMatrix,translationMat);
-      modelViewMatrix = mult(modelViewMatrix, rotate(theta[xAxis], vec3(1, 0, 0)));
-      modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis], vec3(0, 1, 0)));
-      modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis], vec3(0, 0, 1)));
+      modelViewMatrix = mult(modelViewMatrix, rotate(theta[xAxis]+ rotateX, vec3(1, 0, 0)));
+      modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis]+rotateY, vec3(0, 1, 0)));
+      modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis]+rotateZ, vec3(0, 0, 1)));
 
-      //console.log(modelView);
+      
 
       gl.uniformMatrix4fv(gl.getUniformLocation(program,
          "uModelViewMatrix"), false, flatten(modelViewMatrix));
@@ -233,6 +253,9 @@ var shadedCube = function () {
          var diffuseProduct = mult(lightDiffuse, materialDiffuse);
          gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
          diffuseProduct);
+
+         gl.uniform1f(gl.getUniformLocation(program,
+            "uShininess"), materialShininess);
 
       gl.drawArrays(gl.TRIANGLES, 0, numPositions);
 
@@ -251,5 +274,30 @@ function hexToRgb(hex) {
      b: parseInt(result[3], 16)
    } : null;
  }
+
+ //change projection
+ //
+ var translationMat2 = mat4(1,0,0,0,
+   0,1,0,0,
+   0,0,1,-2,
+   0,0,0,1);
+ function ProjectionOrtho(projectionMatrix)
+ {
+    projectionMatrix = ortho(-1, 1, -1, 1, -100, 100);
+
+   projectionMatrix  =mult(projectionMatrix,translationMat2);
+         gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
+            false, flatten(projectionMatrix));
+ }
+ function ProjectionPerspective(projectionMatrix)
+ {
+   var fovy = 10000, aspect=1, near=0.01, far=100;
+    projectionMatrix = perspective(fovy, aspect, near, far);
+
+   projectionMatrix  =mult(projectionMatrix,translationMat2);
+         gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
+            false, flatten(projectionMatrix));
+ }
+ //
 
 shadedCube();
