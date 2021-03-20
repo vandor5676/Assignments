@@ -9,6 +9,8 @@ function main() {
     return;
   }
 
+  var uMatrixUpdate = mat4();
+
   // creates buffers with position, normal, texcoord, and vertex color
   // data for primitives by calling gl.createBuffer, gl.bindBuffer,
   // and gl.bufferData
@@ -27,12 +29,18 @@ function main() {
   // Uniforms for each object.
   var coneUniforms = {
     u_colorMult: [0.5, 0.5, 1, 1],
-    u_matrix: m4.identity(),
+    u_matrix: mat4(),
   };
 
 
 
   function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation, zRotation) {
+    var matrix2 = translate(
+      translation[0],
+      translation[1],
+      translation[2]);
+
+    var matrix = m4.identity();
     var matrix = m4.translate(viewProjectionMatrix,
       translation[0],
       translation[1],
@@ -40,6 +48,7 @@ function main() {
     matrix = m4.xRotate(matrix, xRotation);
     matrix = m4.yRotate(matrix, yRotation);
     return m4.zRotate(matrix, zRotation);
+    return matrix2;
   }
   function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -118,6 +127,7 @@ function main() {
     coneUniforms.u_colorMult[1] = hexToRgb(event.target.value).g / 255;
     coneUniforms.u_colorMult[2] = hexToRgb(event.target.value).b / 255;
   }
+  var u_matrix = gl.getUniformLocation(programInfo.program, "u_matrix");
 
   // Draw the scene.
   function drawScene(time) {
@@ -159,6 +169,8 @@ function main() {
 
     gl.useProgram(programInfo.program);
 
+    
+
     // ------ Draw the cone --------
     var coneXRotation = rotateX;
     var coneYRotation = rotateY;
@@ -174,8 +186,11 @@ function main() {
       coneYRotation,
       rotateZ);
 
+
     // Set the uniforms we just computed
     webglUtils.setUniforms(programInfo, coneUniforms);
+
+    gl.uniformMatrix4fv(u_matrix,false,uMatrixUpdate );
 
     gl.drawArrays(gl.TRIANGLES, 0, coneBufferInfo.numElements);
 
