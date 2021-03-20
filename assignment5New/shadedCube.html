@@ -19,9 +19,28 @@
                 <input type="color" id="shapeColor" name="head" value="#e61465">
                 <label for="head">color</label>
                 <div id="shininess"></div>
+                ---
                 <div id="projection"></div>
                 ---
-                
+                <div></div>
+                <input type="color" id="ambientColor" name="head" value="#e61465">
+                <label for="head">ambient</label>
+                <div id="ambientIntensity"></div>
+                ---
+                <div></div>
+                <input type="color" id="diffuseColor" name="head" value="#e61465">
+                <label for="head">diffuse</label>
+                <div id="diffuseIntensity"></div>
+                ---
+                <div></div>
+                <input type="color" id="specularColor" name="head" value="#e61465">
+                <label for="head">specular</label>
+                <div id="specularIntensity"></div>
+                ---
+                <div id="lightShiftX"></div>
+                <div id="lightShiftY"></div>
+                <div id="lightShiftZ"></div>
+                ---
             </div>
         </div>
         <button id="ButtonX">Rotate X</button>
@@ -42,6 +61,7 @@ in  vec3 aNormal;
 out vec4 vColor;
 
 uniform vec4 uAmbientProduct, uDiffuseProduct, uSpecularProduct;
+uniform float uAmbientMult, uDiffuseMult, uSpecularMult;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform vec4 uLightPosition;
@@ -82,7 +102,7 @@ void main()
     }
 
     gl_Position = uProjectionMatrix * uModelViewMatrix *aPosition;
-    vColor = ambient + diffuse +specular;
+    vColor = ambient * uAmbientMult + diffuse *uDiffuseMult +specular *uSpecularMult;
 
     vColor.a = 1.0;
 }

@@ -21,7 +21,7 @@ var shadedCube = function () {
       vec4(0.5, 0.5, -0.5, 1.0),
       vec4(0.5, -0.5, -0.5, 1.0)
    ];
-   
+
 
    var lightPosition = vec4(1.0, 1.0, 1.0, 0.0);
    var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
@@ -81,72 +81,135 @@ var shadedCube = function () {
    }
    //---- ui ----
    //----
-   var scaleFactor =1;
+   var scaleFactor = 1;
    var cordShiftX = 0;
    var cordShiftY = 0;
    var cordShiftZ = 0;
- 
+   
    var rotateX = 0;
    var rotateY = 0;
    var rotateZ = 0;
+   
+   var ambientScale = 1;
+   var diffuseScale = 1;
+   var specularScale = 1;
+   
+   var lightShiftX = 0;
+   var lightShiftY = 0;
+   var lightShiftZ = 0;
 
-   webglLessonsUI.setupSlider("#cubeSize", { value: (scaleFactor), slide: updateBase, step:0.01, min: .5, max: 1.5 });
+   webglLessonsUI.setupSlider("#cubeSize", { value: (scaleFactor), slide: updateBase, step: 0.01, min: .5, max: 1.5 });
    function updateBase(event, ui) {
-     scaleFactor = ui.value;
+      scaleFactor = ui.value;
    };
 
    ///cord shift
-  webglLessonsUI.setupSlider("#cordShiftX", { value: (cordShiftX), slide: updateX, step:0.01, min: -1, max: 1 });
-  function updateX(event, ui) {
-    cordShiftX = (ui.value);
-  }
-  webglLessonsUI.setupSlider("#cordShiftY", { value: (cordShiftY), slide: updateY, step:0.01, min: -1, max: 1 });
-  function updateY(event, ui) {
-    cordShiftY = (ui.value);
-  }
-  webglLessonsUI.setupSlider("#cordShiftZ", { value: (cordShiftZ), slide: updateZ, step:0.01, min: -10, max: 0 });
-  function updateZ(event, ui) {
-    cordShiftZ = (ui.value);
-  }
+   webglLessonsUI.setupSlider("#cordShiftX", { value: (cordShiftX), slide: updateX, step: 0.01, min: -1, max: 1 });
+   function updateX(event, ui) {
+      cordShiftX = (ui.value);
+   }
+   webglLessonsUI.setupSlider("#cordShiftY", { value: (cordShiftY), slide: updateY, step: 0.01, min: -1, max: 1 });
+   function updateY(event, ui) {
+      cordShiftY = (ui.value);
+   }
+   webglLessonsUI.setupSlider("#cordShiftZ", { value: (cordShiftZ), slide: updateZ, step: 0.01, min: -10, max: 0 });
+   function updateZ(event, ui) {
+      cordShiftZ = (ui.value);
+   }
 
-  //rotate 
-  webglLessonsUI.setupSlider("#rotateX", { value: (rotateX), slide: updateRotateX, step: 0.02, min: 0, max: 180 });
-  function updateRotateX(event, ui) {
-    rotateX = (ui.value);
-  }
-  webglLessonsUI.setupSlider("#rotateY", { value: (rotateY), slide: updateRotateY, step: 0.02, min: 0, max: 180 });
-  function updateRotateY(event, ui) {
-    rotateY = (ui.value);
-  }
-  webglLessonsUI.setupSlider("#rotateZ", { value: (rotateZ), slide: updateRotateZ, step: 0.02, min: 0, max: 180 });
-  function updateRotateZ(event, ui) {
-    rotateZ = (ui.value);
-  }
- //shininess
- webglLessonsUI.setupSlider("#shininess", { value: (rotateZ), slide: updateshine, step: 0.02, min: 5, max: 100 });
- function updateshine(event, ui) {
-   materialShininess = (ui.value);
- }
- //projection
- webglLessonsUI.setupSlider("#projection", { value: (rotateZ), slide: updateProjection, step: 1, min: 0, max: 1,name:"Projection 1=ortho 0=perspective" });
- function updateProjection(event, ui) {
-   if(ui.value == 0)
-   {
-      projectionMatrix = ProjectionPerspective(projectionMatrix);
+   //rotate 
+   webglLessonsUI.setupSlider("#rotateX", { value: (rotateX), slide: updateRotateX, step: 0.02, min: 0, max: 180 });
+   function updateRotateX(event, ui) {
+      rotateX = (ui.value);
    }
-   else
-   {
-      projectionMatrix = ProjectionOrtho(projectionMatrix);
+   webglLessonsUI.setupSlider("#rotateY", { value: (rotateY), slide: updateRotateY, step: 0.02, min: 0, max: 180 });
+   function updateRotateY(event, ui) {
+      rotateY = (ui.value);
    }
- }
+   webglLessonsUI.setupSlider("#rotateZ", { value: (rotateZ), slide: updateRotateZ, step: 0.02, min: 0, max: 180 });
+   function updateRotateZ(event, ui) {
+      rotateZ = (ui.value);
+   }
+   //shininess
+   webglLessonsUI.setupSlider("#shininess", { value: (rotateZ), slide: updateshine, step: 0.02, min: 5, max: 100 });
+   function updateshine(event, ui) {
+      materialShininess = (ui.value);
+   }
+   //projection
+   webglLessonsUI.setupSlider("#projection", { value: (rotateZ), slide: updateProjection, step: 1, min: 0, max: 1, name: "Projection 1=ortho 0=perspective" });
+   function updateProjection(event, ui) {
+      if (ui.value == 0) {
+         projectionMatrix = ProjectionPerspective(projectionMatrix);
+      }
+      else {
+         projectionMatrix = ProjectionOrtho(projectionMatrix);
+      }
+   }
+
+   //ambient intensity
+   webglLessonsUI.setupSlider("#ambientIntensity", { value: (rotateZ), slide: updateAmbientIntensity, step: 0.02, min: 0, max: 1.2 });
+   function updateAmbientIntensity(event, ui) {
+      ambientScale = (ui.value);
+   }
+   //ambient intensity
+   webglLessonsUI.setupSlider("#diffuseIntensity", { value: (rotateZ), slide: updateDiffuseIntensity, step: 0.02, min: 0, max: 1.2 });
+   function updateDiffuseIntensity(event, ui) {
+      diffuseScale = (ui.value);
+   }
+   //ambient intensity
+   webglLessonsUI.setupSlider("#specularIntensity", { value: (rotateZ), slide: updateSpecularIntensity, step: 0.02, min: 0, max: 1.2 });
+   function updateSpecularIntensity(event, ui) {
+      specularScale = (ui.value);
+   }
+
+   ///light shift
+   webglLessonsUI.setupSlider("#lightShiftX", { value: (lightShiftX), slide: updateLightX, step: 0.01, min: -1, max: 1 });
+   function updateLightX(event, ui) {
+      lightShiftX = (ui.value);
+      lightPosition[0] = lightShiftX;
+   }
+   webglLessonsUI.setupSlider("#lightShiftY", { value: (lightShiftY), slide: updateLightY, step: 0.01, min: -1, max: 1 });
+   function updateLightY(event, ui) {
+      lightShiftY = (ui.value);
+      lightPosition[1] = lightShiftY;
+   }
+   webglLessonsUI.setupSlider("#lightShiftZ", { value: (lightShiftZ), slide: updateLightZ, step: 0.01, min: 0, max: 10 });
+   function updateLightZ(event, ui) {
+      lightShiftZ = (ui.value);
+      lightPosition[2] = lightShiftZ;
+   }
 
    var colorPicker = document.querySelector("#shapeColor");
-  colorPicker.addEventListener("input", updateFirst, false);
-  function updateFirst(event) {
-   materialDiffuse[0] = hexToRgb(event.target.value).r / 255;
-   materialDiffuse[1] = hexToRgb(event.target.value).g / 255;
-   materialDiffuse[2] = hexToRgb(event.target.value).b / 255;
-  }
+   colorPicker.addEventListener("input", updateFirst, false);
+   function updateFirst(event) {
+      materialDiffuse[0] = hexToRgb(event.target.value).r / 255;
+      materialDiffuse[1] = hexToRgb(event.target.value).g / 255;
+      materialDiffuse[2] = hexToRgb(event.target.value).b / 255;
+   }
+   //ambient picker
+   var colorPicker = document.querySelector("#ambientColor");
+   colorPicker.addEventListener("input", updateAmbient, false);
+   function updateAmbient(event) {
+      lightAmbient[0] = hexToRgb(event.target.value).r / 255;
+      lightAmbient[1] = hexToRgb(event.target.value).g / 255;
+      lightAmbient[2] = hexToRgb(event.target.value).b / 255;
+   }
+   //diffuse picker
+   var colorPicker = document.querySelector("#diffuseColor");
+   colorPicker.addEventListener("input", updateDiffuse, false);
+   function updateDiffuse(event) {
+      lightDiffuse[0] = hexToRgb(event.target.value).r / 255;
+      lightDiffuse[1] = hexToRgb(event.target.value).g / 255;
+      lightDiffuse[2] = hexToRgb(event.target.value).b / 255;
+   }
+   //specular picker
+   var colorPicker = document.querySelector("#specularColor");
+   colorPicker.addEventListener("input", updateSpecular, false);
+   function updateSpecular(event) {
+      lightSpecular[0] = hexToRgb(event.target.value).r / 255;
+      lightSpecular[1] = hexToRgb(event.target.value).g / 255;
+      lightSpecular[2] = hexToRgb(event.target.value).b / 255;
+   }
 
    //----
 
@@ -194,44 +257,31 @@ var shadedCube = function () {
 
       viewerPos = vec3(0.0, 0.0, -20.0);
 
-      
-      projectionMatrix = ProjectionPerspective(projectionMatrix);
-      
-      
 
-     
-      
-      var ambientProduct = mult(lightAmbient, materialAmbient);
-     
-      var specularProduct = mult(lightSpecular, materialSpecular);
+      projectionMatrix = ProjectionPerspective(projectionMatrix);
+
 
       document.getElementById("ButtonX").onclick = function () { axis = xAxis; };
       document.getElementById("ButtonY").onclick = function () { axis = yAxis; };
       document.getElementById("ButtonZ").onclick = function () { axis = zAxis; };
       document.getElementById("ButtonT").onclick = function () { flag = !flag; };
 
-      gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProduct"),
-         ambientProduct);
-      
-      gl.uniform4fv(gl.getUniformLocation(program, "uSpecularProduct"),
-         specularProduct);
-      gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
-         lightPosition);
+
 
       render();
    }
 
    var render = function () {
-      
 
-      var scaleMat = mat4(scaleFactor,0,0,0,
-                          0,scaleFactor,0,0,
-                          0,0,scaleFactor,0,
-                          0,0,0,1);
-      var translationMat = mat4(1,0,0,cordShiftX,
-                                0,1,0,cordShiftY,
-                                0,0,1,cordShiftZ,
-                                0,0,0,1);
+
+      var scaleMat = mat4(scaleFactor, 0, 0, 0,
+         0, scaleFactor, 0, 0,
+         0, 0, scaleFactor, 0,
+         0, 0, 0, 1);
+      var translationMat = mat4(1, 0, 0, cordShiftX,
+         0, 1, 0, cordShiftY,
+         0, 0, 1, cordShiftZ,
+         0, 0, 0, 1);
 
 
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -239,23 +289,40 @@ var shadedCube = function () {
       if (flag) theta[axis] += 1.0;
 
       modelViewMatrix = mat4();
-      modelViewMatrix = mult( modelViewMatrix,scaleMat);
-      modelViewMatrix = mult( modelViewMatrix,translationMat);
-      modelViewMatrix = mult(modelViewMatrix, rotate(theta[xAxis]+ rotateX, vec3(1, 0, 0)));
-      modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis]+rotateY, vec3(0, 1, 0)));
-      modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis]+rotateZ, vec3(0, 0, 1)));
+      modelViewMatrix = mult(modelViewMatrix, scaleMat);
+      modelViewMatrix = mult(modelViewMatrix, translationMat);
+      modelViewMatrix = mult(modelViewMatrix, rotate(theta[xAxis] + rotateX, vec3(1, 0, 0)));
+      modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis] + rotateY, vec3(0, 1, 0)));
+      modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis] + rotateZ, vec3(0, 0, 1)));
 
-      
+
 
       gl.uniformMatrix4fv(gl.getUniformLocation(program,
          "uModelViewMatrix"), false, flatten(modelViewMatrix));
-
-         var diffuseProduct = mult(lightDiffuse, materialDiffuse);
-         gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
-         diffuseProduct);
-
+         //diffuse
          gl.uniform1f(gl.getUniformLocation(program,
-            "uShininess"), materialShininess);
+            "uDiffuseMult"), diffuseScale);
+      var diffuseProduct = mult(lightDiffuse, materialDiffuse);
+      gl.uniform4fv(gl.getUniformLocation(program, "uDiffuseProduct"),
+      diffuseProduct);
+         //ambient
+      gl.uniform1f(gl.getUniformLocation(program,
+         "uAmbientMult"), ambientScale);
+         var ambientProduct = mult(lightAmbient, materialAmbient);
+         gl.uniform4fv(gl.getUniformLocation(program, "uAmbientProduct"),
+         ambientProduct);
+         //specular
+         gl.uniform1f(gl.getUniformLocation(program,
+            "uSpecularMult"), specularScale);
+         var specularProduct = mult(lightSpecular, materialSpecular);
+      gl.uniform4fv(gl.getUniformLocation(program, "uSpecularProduct"),
+         specularProduct);
+         //light location
+      gl.uniform4fv(gl.getUniformLocation(program, "uLightPosition"),
+         lightPosition);
+
+      gl.uniform1f(gl.getUniformLocation(program,
+         "uShininess"), materialShininess);
 
       gl.drawArrays(gl.TRIANGLES, 0, numPositions);
 
@@ -269,35 +336,33 @@ var shadedCube = function () {
 function hexToRgb(hex) {
    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
    return result ? {
-     r: parseInt(result[1], 16),
-     g: parseInt(result[2], 16),
-     b: parseInt(result[3], 16)
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
    } : null;
- }
+}
 
- //change projection
- //
- var translationMat2 = mat4(1,0,0,0,
-   0,1,0,0,
-   0,0,1,-2,
-   0,0,0,1);
- function ProjectionOrtho(projectionMatrix)
- {
-    projectionMatrix = ortho(-1, 1, -1, 1, -100, 100);
+//change projection
+//
+var translationMat2 = mat4(1, 0, 0, 0,
+   0, 1, 0, 0,
+   0, 0, 1, -2,
+   0, 0, 0, 1);
+function ProjectionOrtho(projectionMatrix) {
+   projectionMatrix = ortho(-1, 1, -1, 1, -100, 100);
 
-   projectionMatrix  =mult(projectionMatrix,translationMat2);
-         gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
-            false, flatten(projectionMatrix));
- }
- function ProjectionPerspective(projectionMatrix)
- {
-   var fovy = 10000, aspect=1, near=0.01, far=100;
-    projectionMatrix = perspective(fovy, aspect, near, far);
+   projectionMatrix = mult(projectionMatrix, translationMat2);
+   gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
+      false, flatten(projectionMatrix));
+}
+function ProjectionPerspective(projectionMatrix) {
+   var fovy = 10000, aspect = 1, near = 0.01, far = 100;
+   projectionMatrix = perspective(fovy, aspect, near, far);
 
-   projectionMatrix  =mult(projectionMatrix,translationMat2);
-         gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
-            false, flatten(projectionMatrix));
- }
- //
+   projectionMatrix = mult(projectionMatrix, translationMat2);
+   gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
+      false, flatten(projectionMatrix));
+}
+//
 
 shadedCube();
