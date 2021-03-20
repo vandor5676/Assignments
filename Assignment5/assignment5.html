@@ -1,9 +1,22 @@
-
 <body>
-<canvas id="canvas"></canvas>
+    <canvas id="canvas"></canvas>
+    <div id="uiContainer">
+        <div id="ui">
+            <div id="ConeHeight"></div>
+            <div id="ConeBaseWidth"></div>
+            ---
+            <div id="cordShiftX"></div>
+            <div id="cordShiftY"></div>
+            <div id="cordShiftZ"></div>
+            ---
+            <div id="rotateX"></div>
+            <div id="rotateY"></div>
+            <div id="rotateZ"></div>
+        </div>
+
 </body>
 <!-- vertex shader -->
-<script  id="vertex-shader-3d" type="x-shader/x-vertex">
+<script id="vertex-shader-3d" type="x-shader/x-vertex">
 attribute vec4 a_position;
 attribute vec4 a_color;
 
@@ -20,7 +33,7 @@ void main() {
 }
 </script>
 <!-- fragment shader -->
-<script  id="fragment-shader-3d" type="x-shader/x-fragment">
+<script id="fragment-shader-3d" type="x-shader/x-fragment">
 precision mediump float;
 
 // Passed in from the vertex shader.
@@ -38,8 +51,8 @@ void main() {
 <script src="../Assignment5/resources/primitives.js"></script>
 <script src="../Assignment5/resources/helper.js"></script>
 <script src="../Assignment5/resources/chroma.min.js"></script>
+<script src="../Assignment5/resources/webgl-lessons-ui.js"></script>
+
+
 <script src="../Assignment5/assignment5.js"></script>
-
-
-<script src="https://webglfundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
 <link rel="stylesheet" type="text/css" href="../Assignment5/maincss.css">

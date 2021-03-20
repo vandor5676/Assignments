@@ -1107,7 +1107,7 @@
           vertsPerColor: 6,
           rand: function(ndx, channel) {
             //return channel < 3 ? ((128 + Math.random() * 128) | 0) : 255;
-            return channel < 3 ? ((220 + Math.random() * 35) | 0) : 255;
+            return channel < 3 ? ((255) | 0) : 255;
           },
         });
       return webglUtils.createBufferInfoFromArrays(gl, vertices);
