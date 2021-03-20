@@ -185,6 +185,14 @@ var shadedCube = function () {
       materialDiffuse[0] = hexToRgb(event.target.value).r / 255;
       materialDiffuse[1] = hexToRgb(event.target.value).g / 255;
       materialDiffuse[2] = hexToRgb(event.target.value).b / 255;
+
+      materialAmbient[0] = hexToRgb(event.target.value).r / 255;
+      materialAmbient[1] = hexToRgb(event.target.value).g / 255;
+      materialAmbient[2] = hexToRgb(event.target.value).b / 255;
+
+      materialShininess[0] = hexToRgb(event.target.value).r / 255;
+      materialShininess[1] = hexToRgb(event.target.value).g / 255;
+      materialShininess[2] = hexToRgb(event.target.value).b / 255;
    }
    //ambient picker
    var colorPicker = document.querySelector("#ambientColor");
@@ -209,6 +217,26 @@ var shadedCube = function () {
       lightSpecular[0] = hexToRgb(event.target.value).r / 255;
       lightSpecular[1] = hexToRgb(event.target.value).g / 255;
       lightSpecular[2] = hexToRgb(event.target.value).b / 255;
+   }
+
+   //toggle lights on/ off
+   var lightPosCopy;
+   webglLessonsUI.setupSlider("#lightsOff", { value: (lightShiftZ), slide: toggleLight, step: 1, min: 0, max: 1 });
+   function toggleLight(event, ui) {
+      if(ui.value == 1)
+      {
+        diffuseScale = 0;
+        specularScale =0;
+        ambientScale = 0;
+      }
+      else
+      {
+         diffuseScale = 1;
+        specularScale =1;
+        ambientScale = 1;
+      }
+      
+
    }
 
    //----

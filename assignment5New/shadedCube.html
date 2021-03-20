@@ -41,6 +41,7 @@
                 <div id="lightShiftY"></div>
                 <div id="lightShiftZ"></div>
                 ---
+                <div id="lightsOff"></div>
             </div>
         </div>
         <button id="ButtonX">Rotate X</button>
@@ -62,6 +63,7 @@ out vec4 vColor;
 
 uniform vec4 uAmbientProduct, uDiffuseProduct, uSpecularProduct;
 uniform float uAmbientMult, uDiffuseMult, uSpecularMult;
+
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform vec4 uLightPosition;
@@ -102,8 +104,7 @@ void main()
     }
 
     gl_Position = uProjectionMatrix * uModelViewMatrix *aPosition;
-    vColor = ambient * uAmbientMult + diffuse *uDiffuseMult +specular *uSpecularMult;
-
+    vColor = (ambient * uAmbientMult + diffuse *uDiffuseMult +specular *uSpecularMult);
     vColor.a = 1.0;
 }
 </script>
