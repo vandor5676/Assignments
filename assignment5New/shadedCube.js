@@ -1,3 +1,8 @@
+// <!-- File name: shadedcube.js-->
+// <!-- Programmer name: Shane Steiner -->
+// <!-- Description: main, render -->
+// <!-- Creation Date: 3/20/2021 -->
+
 "use strict";
 
 var gl;
@@ -48,6 +53,7 @@ var shadedCube = function () {
 
    var flag = false;
 
+   //get vertecies set up
    function quad(a, b, c, d) {
 
       var t1 = subtract(vertices[b], vertices[a]);
@@ -70,7 +76,7 @@ var shadedCube = function () {
       normalsArray.push(normal);
    }
 
-
+   //for vertecies
    function colorCube() {
       quad(1, 0, 3, 2);
       quad(2, 3, 7, 6);
@@ -98,6 +104,7 @@ var shadedCube = function () {
    var lightShiftY = 0;
    var lightShiftZ = 0;
 
+   //cube size
    webglLessonsUI.setupSlider("#cubeSize", { value: (scaleFactor), slide: updateBase, step: 0.01, min: .5, max: 1.5 });
    function updateBase(event, ui) {
       scaleFactor = ui.value;
