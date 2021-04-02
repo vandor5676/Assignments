@@ -35,11 +35,41 @@ var positionsArray = [];
 var colorsArray = [];
 var texCoordsArray = [];
 
-var texCoord = [
+var texCoordBack = [
+    vec2(0, 0.5), // bottom left
     vec2(0, 0), //top left
     vec2(0.25, 0), //top right
-    vec2(0.25, 0.5), // bottom rigth
-    vec2(0, 0.5), // bottom left
+    vec2(0.25, 0.5), // bottom right
+];
+var texCoordFront = [
+    vec2(0.75, 0.5), //top right
+    vec2(0.75, 1.0), // bottom right
+    vec2(0.5, 1.0), // bottom left
+    vec2(0.5, 0.5), //top left
+];
+var texCoordLeft = [
+    vec2(0.5, 0), //top right
+    vec2(0.5, 0.5), // bottom right
+    vec2(0.25, 0.5), // bottom left
+    vec2(0.25, 0), //top left
+];
+var texCoordRight = [
+    vec2(0.75, 0), //top right
+    vec2(0.75, 0.5), // bottom right
+    vec2(0.5, 0.5), // bottom left
+    vec2(0.5, 0), //top left
+];
+var texCoordTop = [
+    vec2(0, 0.5), //top left
+    vec2(0.25, 0.5), //top right
+    vec2(0.25, 1.0), // bottom right
+    vec2(0, 1.0), // bottom left
+];
+var texCoordBottom = [
+    vec2(0.25, 0.50), //top left
+    vec2(0.50, 0.50), //top right
+    vec2(0.50, 1.0), // bottom right
+    vec2(0.25, 1.0), // bottom left
 ];
 
 
@@ -97,7 +127,7 @@ function configureTexture() {
 
 }
 
-function quad(a, b, c, d) {
+function quad(a, b, c, d, texCoord) {
 
     positionsArray.push(vertices[a]);
     colorsArray.push(vertexColors[a]);
@@ -126,12 +156,12 @@ function quad(a, b, c, d) {
 
 
 function colorCube() {
-    quad(1, 0, 3, 2);
-    quad(2, 3, 7, 6);
-    quad(3, 0, 4, 7);
-    quad(6, 5, 1, 2);
-    quad(4, 5, 6, 7);
-    quad(5, 4, 0, 1);
+    quad(2, 3, 7, 6,texCoordLeft);
+    quad(1, 0, 3, 2,texCoordFront);
+    quad(3, 0, 4, 7,texCoordBottom);
+    quad(6, 5, 1, 2,texCoordTop);
+    quad(4, 5, 6, 7,texCoordBack);
+    quad(5, 4, 0, 1,texCoordRight);
 }
 
 
