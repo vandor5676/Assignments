@@ -7,39 +7,39 @@ var numPositions = 36;
 
 var texSize = 64;
 
-var flag = true;
+var flag = false;
 
 // Create a checkerboard pattern using floats
 
 
-var image1 = new Array()
-for (var i = 0; i < texSize; i++)  image1[i] = new Array();
-for (var i = 0; i < texSize; i++)
-    for (var j = 0; j < texSize; j++)
-        image1[i][j] = new Float32Array(4);
-for (var i = 0; i < texSize; i++) for (var j = 0; j < texSize; j++) {
-    var c = (((i & 0x8) == 0) ^ ((j & 0x8) == 0));
-    image1[i][j] = [c, c, c, 1];
-}
+// var image1 = new Array()
+// for (var i = 0; i < texSize; i++)  image1[i] = new Array();
+// for (var i = 0; i < texSize; i++)
+//     for (var j = 0; j < texSize; j++)
+//         image1[i][j] = new Float32Array(4);
+// for (var i = 0; i < texSize; i++) for (var j = 0; j < texSize; j++) {
+//     var c = (((i & 0x8) == 0) ^ ((j & 0x8) == 0));
+//     image1[i][j] = [c, c, c, 1];
+// }
 
 // Convert floats to ubytes for texture
 
-var image2 = new Uint8Array(4 * texSize * texSize);
+// var image2 = new Uint8Array(4 * texSize * texSize);
 
-for (var i = 0; i < texSize; i++)
-    for (var j = 0; j < texSize; j++)
-        for (var k = 0; k < 4; k++)
-            image2[4 * texSize * i + 4 * j + k] = 255 * image1[i][j][k];
+// for (var i = 0; i < texSize; i++)
+//     for (var j = 0; j < texSize; j++)
+//         for (var k = 0; k < 4; k++)
+//             image2[4 * texSize * i + 4 * j + k] = 255 * image1[i][j][k];
 
 var positionsArray = [];
 var colorsArray = [];
 var texCoordsArray = [];
 
 var texCoord = [
-    vec2(0, 0),
-    vec2(0, 1),
-    vec2(1, 1),
-    vec2(1, 0)
+    vec2(0, 0), //top left
+    vec2(0.25, 0), //top right
+    vec2(0.25, 0.5), // bottom rigth
+    vec2(0, 0.5), // bottom left
 ];
 
 
@@ -73,15 +73,16 @@ var yAxis = 1;
 var zAxis = 2;
 var axis = xAxis;
 
-var theta = vec3(45.0, 45.0, 45.0);
+// var theta = vec3(45.0, 45.0, 45.0);
+var theta = vec3(0, 0, 0);
 
 var thetaLoc;
 
-function configureTexture(image) {
+function configureTexture() {
     var texture = gl.createTexture();
 
     var image = new Image();
-    image.src = "../assignment6/photos/back.png";
+    image.src = "../assignment6/photos/catMap.png";
     image.addEventListener('load', function () {
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -89,8 +90,8 @@ function configureTexture(image) {
 
        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, texSize, texSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
         gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     });
 
 
@@ -174,7 +175,7 @@ function init() {
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
 
-    configureTexture(image2);
+    configureTexture();
 
     gl.uniform1i(gl.getUniformLocation(program, "uTextureMap"), 0);
 
