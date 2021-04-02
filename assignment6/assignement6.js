@@ -3,7 +3,8 @@
 var canvas;
 var gl;
 
-var numPositions = 36;
+var numPositions = 72;
+// var numPositions = 36;
 
 var texSize = 64;
 
@@ -81,7 +82,16 @@ var vertices = [
     vec4(-0.5, -0.5, -0.5, 1.0),
     vec4(-0.5, 0.5, -0.5, 1.0),
     vec4(0.5, 0.5, -0.5, 1.0),
-    vec4(0.5, -0.5, -0.5, 1.0)
+    vec4(0.5, -0.5, -0.5, 1.0),
+
+    vec4(-0.5+0.5, -0.5+0.5, 0.5+0.5, 1.0),
+    vec4(-0.5+0.5, 0.5+0.5, 0.5+0.5, 1.0),
+    vec4(0.5+0.5, 0.5+0.5, 0.5+0.5, 1.0),
+    vec4(0.5+0.5, -0.5+0.5, 0.5+0.5, 1.0),
+    vec4(-0.5+0.5, -0.5+0.5, -0.5+0.5, 1.0),
+    vec4(-0.5+0.5, 0.5+0.5, -0.5+0.5, 1.0),
+    vec4(0.5+0.5, 0.5+0.5, -0.5+0.5, 1.0),
+    vec4(0.5+0.5, -0.5+0.5, -0.5+0.5, 1.0),
 ];
 
 
@@ -93,7 +103,16 @@ var vertexColors = [
     vec4(0.0, 0.0, 1.0, 1.0),  // blue
     vec4(1.0, 0.0, 1.0, 1.0),  // magenta
     vec4(0.0, 1.0, 1.0, 1.0),  // white
-    vec4(0.0, 1.0, 1.0, 1.0)   // cyan
+    vec4(0.0, 1.0, 1.0, 1.0),   // cyan
+
+    vec4(0.0, 0.0, 0.0, 1.0),  // black
+    vec4(1.0, 0.0, 0.0, 1.0),  // red
+    vec4(1.0, 1.0, 0.0, 1.0),  // yellow
+    vec4(0.0, 1.0, 0.0, 1.0),  // green
+    vec4(0.0, 0.0, 1.0, 1.0),  // blue
+    vec4(1.0, 0.0, 1.0, 1.0),  // magenta
+    vec4(0.0, 1.0, 1.0, 1.0),  // white
+    vec4(0.0, 1.0, 1.0, 1.0),   // cyan
 ];
 window.onload = init;
 
@@ -162,6 +181,13 @@ function colorCube() {
     quad(6, 5, 1, 2,texCoordTop);
     quad(4, 5, 6, 7,texCoordBack);
     quad(5, 4, 0, 1,texCoordRight);
+
+    quad(10, 11, 15, 14,texCoordLeft);
+    quad(9, 8, 11, 10,texCoordFront);
+    quad(11, 8, 12, 15,texCoordBottom);
+    quad(14, 13, 9, 10,texCoordTop);
+    quad(12, 13, 14, 15,texCoordBack);
+    quad(13, 12, 8, 9,texCoordRight);
 }
 
 
