@@ -391,7 +391,7 @@ function ProjectionOrtho(projectionMatrix) {
       false, flatten(projectionMatrix));
 }
 function ProjectionPerspective(projectionMatrix) {
-   var fovy = 10000, aspect = 1, near = 0.01, far = 100;
+   var fovy = 100, aspect = 1, near = 0.1, far = 100;
    projectionMatrix = perspective(fovy, aspect, near, far);
 
    projectionMatrix = mult(projectionMatrix, translationMat2);

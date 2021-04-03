@@ -2,8 +2,12 @@
 
 var canvas;
 var gl;
+var program;
+
+var modelViewMatrix,projectionMatrix;
 
 var numPositions = 72;
+var normalsArray = [];
 // var numPositions = 36;
 
 var texSize = 64;
@@ -84,14 +88,14 @@ var vertices = [
     vec4(0.5, 0.5, -0.5, 1.0),
     vec4(0.5, -0.5, -0.5, 1.0),
 
-    vec4(-0.5+0.5, -0.5+0.5, 0.5+0.5, 1.0),
-    vec4(-0.5+0.5, 0.5+0.5, 0.5+0.5, 1.0),
-    vec4(0.5+0.5, 0.5+0.5, 0.5+0.5, 1.0),
-    vec4(0.5+0.5, -0.5+0.5, 0.5+0.5, 1.0),
-    vec4(-0.5+0.5, -0.5+0.5, -0.5+0.5, 1.0),
-    vec4(-0.5+0.5, 0.5+0.5, -0.5+0.5, 1.0),
-    vec4(0.5+0.5, 0.5+0.5, -0.5+0.5, 1.0),
-    vec4(0.5+0.5, -0.5+0.5, -0.5+0.5, 1.0),
+    vec4(-0.5+2.5, -0.5+2.5, 0.5+2.5, 1.0),
+    vec4(-0.5+2.5, 0.5+2.5, 0.5+2.5, 1.0),
+    vec4(0.5+2.5, 0.5+2.5, 0.5+2.5, 1.0),
+    vec4(0.5+2.5, -0.5+2.5, 0.5+2.5, 1.0),
+    vec4(-0.5+2.5, -0.5+2.5, -0.5+2.5, 1.0),
+    vec4(-0.5+2.5, 0.5+2.5, -0.5+2.5, 1.0),
+    vec4(0.5+2.5, 0.5+2.5, -0.5+2.5, 1.0),
+    vec4(0.5+2.5, -0.5+2.5, -0.5+2.5, 1.0),
 ];
 
 
@@ -122,7 +126,7 @@ var yAxis = 1;
 var zAxis = 2;
 var axis = xAxis;
 
-// var theta = vec3(45.0, 45.0, 45.0);
+//  var theta = vec3(45.0, 45.0, 45.0);
 var theta = vec3(0, 0, 0);
 
 var thetaLoc;
@@ -148,27 +152,38 @@ function configureTexture() {
 
 function quad(a, b, c, d, texCoord) {
 
+    var t1 = subtract(vertices[b], vertices[a]);
+    var t2 = subtract(vertices[c], vertices[b]);
+    var normal = cross(t1, t2);
+    normal = vec3(normal);
+
     positionsArray.push(vertices[a]);
+    normalsArray.push(normal);
     colorsArray.push(vertexColors[a]);
     texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(vertices[b]);
+    normalsArray.push(normal);
     colorsArray.push(vertexColors[a]);
     texCoordsArray.push(texCoord[1]);
 
     positionsArray.push(vertices[c]);
+    normalsArray.push(normal);
     colorsArray.push(vertexColors[a]);
     texCoordsArray.push(texCoord[2]);
 
     positionsArray.push(vertices[a]);
+    normalsArray.push(normal);
     colorsArray.push(vertexColors[a]);
     texCoordsArray.push(texCoord[0]);
 
     positionsArray.push(vertices[c]);
+    normalsArray.push(normal);
     colorsArray.push(vertexColors[a]);
     texCoordsArray.push(texCoord[2]);
 
     positionsArray.push(vertices[d]);
+    normalsArray.push(normal);
     colorsArray.push(vertexColors[a]);
     texCoordsArray.push(texCoord[3]);
 }
@@ -205,10 +220,14 @@ function init() {
     //
     //  Load shaders and initialize attribute buffers
     //
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
     colorCube();
+
+    var nBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
     var cBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
@@ -237,6 +256,12 @@ function init() {
 
     thetaLoc = gl.getUniformLocation(program, "uTheta");
 
+    //
+    projectionMatrix = mat4();
+    //projectionMatrix = ProjectionPerspective(projectionMatrix);
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),  false, flatten(projectionMatrix));
+  
+
     document.getElementById("ButtonX").onclick = function () { axis = xAxis; };
     document.getElementById("ButtonY").onclick = function () { axis = yAxis; };
     document.getElementById("ButtonZ").onclick = function () { axis = zAxis; };
@@ -246,9 +271,56 @@ function init() {
 }
 
 var render = function () {
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if (flag) theta[axis] += 2.0;
-    gl.uniform3fv(thetaLoc, theta);
-    gl.drawArrays(gl.TRIANGLES, 0, numPositions);
+
+    var scaleFactor= 0.2;
+    var cordShiftX= 0;
+    var cordShiftY= 0;
+    var cordShiftZ= 0;
+
+    var rotateX = 0;
+    var rotateY = 0;
+    var rotateZ = 0;
+
+    var scaleMat = mat4(scaleFactor, 0, 0, 0,
+        0, scaleFactor, 0, 0,
+        0, 0, scaleFactor, 0,
+        0, 0, 0, 1);
+     var translationMat = mat4(1, 0, 0, cordShiftX,
+        0, 1, 0, cordShiftY,
+        0, 0, 1, cordShiftZ,
+        0, 0, 0, 1);
+
+
+     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+     if (flag) theta[axis] += 1.0;
+
+     modelViewMatrix = mat4();
+     modelViewMatrix = mult(modelViewMatrix, scaleMat);
+      modelViewMatrix = mult(modelViewMatrix, translationMat);
+     modelViewMatrix = mult(modelViewMatrix, rotate(theta[xAxis] + rotateX, vec3(1, 0, 0)));
+     modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis] + rotateY, vec3(0, 1, 0)));
+     modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis] + rotateZ, vec3(0, 0, 1)));
+
+     gl.uniformMatrix4fv(gl.getUniformLocation(program,"uModelViewMatrix"), false, flatten(modelViewMatrix));
+     //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+     // if (flag) theta[axis] += 2.0;
+     //gl.uniform3fv(thetaLoc, theta);
+     gl.drawArrays(gl.TRIANGLES, 0, numPositions);
     requestAnimationFrame(render);
 }
+//
+
+var translationMat2 = mat4(1, 0, 0, 0,
+                           0, 1, 0, 0,
+                           0, 0, 1, -1,
+                           0, 0, 0, 1);
+function ProjectionPerspective(projectionMatrix) {
+    var fovy = 100, aspect = 1, near = 0, far = 100;
+    projectionMatrix = perspective(fovy, aspect, near, far);
+ 
+    projectionMatrix = mult(projectionMatrix, translationMat2);
+    gl.uniformMatrix4fv(gl.getUniformLocation(program, "uProjectionMatrix"),
+       false, flatten(projectionMatrix));
+       return projectionMatrix;
+ }

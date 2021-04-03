@@ -5,6 +5,19 @@
             "name": "assignment5",
             "request": "launch",
             "url": "http://127.0.0.1:5501/assignment5New/shadedCube.html"
-        }
+        },
+        {
+            "type": "pwa-chrome",
+            "name": "assignment6",
+            "request": "launch",
+            "url": "http://127.0.0.1:5501/assignment6/assignment6.html"
+        },
+        {
+            "type": "pwa-chrome",
+            "name": "TEXTURED CUBE",
+            "request": "launch",
+            "url": "http://127.0.0.1:5501/assignment6/textureCube2.html"
+        },
+
     ]
 }
